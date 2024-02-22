@@ -40,6 +40,7 @@ class LinuxUidList:
             'docker': 'docker',
             '_apt': '_apt',
             'tss': 'tss',
+            'vbox': 'vbox',
         }
 
     @staticmethod
@@ -189,12 +190,12 @@ class LinuxUidList:
                 merged_user_info[_stander_user_name] = _merged_user_info_uname_dict
 
         print(self.__format_result(merged_user_info))
-        print(f'@@@@@ Next suggest UID is {len(merged_user_info) + 20000 + 1} @@@@@')
 
     @staticmethod
     def __format_result(result: dict) -> str:
 
         rtn = ''
+        max_uid = -1
 
         for _k, _v in result.items():
             # example->  _k = root, _v = {0: ['127.0.0.1', '127.0.0.2'], ...}
@@ -204,6 +205,11 @@ class LinuxUidList:
             for _uid, _host_list in _v.items():
                 # example->  _uid = 0, _host_list = ['127.0.0.1', '127.0.0.2']
                 rtn += f'    {_uid}: {_host_list}\n'
+
+                if int(_uid) < 30000:
+                    max_uid = max(max_uid, int(_uid))
+
+        rtn += f'@@@@@ Next suggest UID is {max_uid + 1} @@@@@'
 
         return rtn
 
